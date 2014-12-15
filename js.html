@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta property="qc:admins" content="244041011605674563566375" />
+<title>qq login</title>
+
+<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" data-appid="101177686" charset="utf-8"></script>
+
+<!-- script type="text/javascript" src="qc_loader.js" data-appid="101177686" charset="utf-8"></script-->
+<style>
+.a{}
+</style>
+</head>
+<body>
+
+<button onclick="add_share();" value="分享" >分享</button>
+<button onclick="add_t();" value="发微博" >发微博</button>
+
+<br>
+基础信息:<br>	
+<a href ="javascript:request('user/get_user_info');">user/get_user_info</a><br>
+<a href ="javascript:request('user/get_info');">user/get_info</a><br>
+
+腾讯微博:<br>
+<a href ="javascript:request('t/add_t');">t/add_t</a><br>
+<a href ="javascript:request('t/del_t');">t/del_t</a><br>
+<a href ="javascript:request('t/add_pic_t');">t/add_pic_t</a><br>
+<a href ="javascript:request('t/get_repost_list');">t/get_repost_list</a><br>
+
+微博好友信息:<br>	
+<a href ="javascript:request('user/get_other_info');">user/get_other_info</a><br>
+<a href ="javascript:request('relation/get_fanslist');">relation/get_fanslist</a><br>
+<a href ="javascript:request('relation/get_idollist');">relation/get_idollist</a><br>
+<a href ="javascript:request('relation/add_idol');">relation/add_idol</a><br>
+<a href ="javascript:request('relation/del_idol');">relation/del_idol</a><br>
+
+
+<br>
+<br>
+
+<span id="qqLoginBtn"></span>
+
+<script type="text/javascript">
+	QC.Login({
+		btnId:"qqLoginBtn",	//插入按钮的节点id
+		size:"A_XL"
+	});
+</script>
+
+
+<script type="text/javascript">
+
+var s = {};
+
+function request(api)
+{
+	if(!s.openId)
+	{
+		alert('请先登录');
+		return;
+	}
+	var format = 'json';
+	var url = "https://graph.qq.com/"+api+"?oauth_consumer_key="+s.appId+"&access_token="+s.accessToken+"&openid="+s.openId+"&format="+format;
+	//return url;
+	window.location.href = url;
+}
+
+function getVar()
+{
+	if(QC.Login.check()){//如果已登录
+		QC.Login.getMe(function(openId, accessToken){
+			//alert(["当前登录用户的", "openId为："+openId, "accessToken为："+accessToken].join("\n"));
+			s.openId = openId;
+			s.accessToken = accessToken;
+			s.appId = QC.getAppId();
+			console.log(s);
+		});
+		//这里可以调用自己的保存接口
+		//...
+	}
+}
+
+var paras = {};
+QC.api("get_user_info", paras)
+	.success(function(s){//成功回调
+		//alert("获取用户信息成功！当前用户昵称为："+s.data.nickname);
+		getVar();
+	})
+	.error(function(f){//失败回调
+		alert("获取用户信息失败！");
+	})
+	.complete(function(c){//完成请求回调
+		//alert("获取用户信息完成！");
+	});
+</script>
+
+<script type="text/javascript">
+function add_share()
+{
+	//从页面收集openapi必要的参数
+	var paras = {
+		images:"http://y.photo.qq.com/img?s=OnbP8BwOF&l=y.jpg",
+		title:"#QQ互联JSSDK测试#我是标题啊标题",
+		url:"http://connect.qq.com/",
+		comment:"我是评论：转发原因",
+		summary:"我是摘要：内容说明"
+	};
+	
+	//用jssdk调用openapi
+	QC.api("add_share", paras)
+		.success(function(s){//请自行改写成功回调
+			alert("分享成功，请到空间内查看！");
+		})
+		.error(function(f){//请自行改写失败回调
+			//console.log(f);
+			alert("分享失败\ncode:"+f.data.code+"\nmsg:"+f.data.msg);
+		})
+		.complete(function(c){//请自行改写完成请求回调
+			//alert("分享完成！");
+		});
+}
+
+function add_t()
+{
+	var paras = {content : "#QQ互联JSSDK测试#曾经沧海难为水，除却巫山不是云。"};
+
+	QC.api("add_t", paras)
+		.success(function(s){//成功回调
+			alert("发送微博成功，请到腾讯微博内查看！");
+		})
+		.error(function(f){//失败回调
+			//console.log(f);
+			alert("发送微博失败\ncode:\n"+f.data.code+"\nmsg:"+f.data.msg);
+		})
+		.complete(function(c){//完成请求回调
+			//alert("发送微博完成！");
+		});
+}
+</script>
+
+
+</body>
+</html>
