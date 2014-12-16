@@ -1,0 +1,7 @@
+git rm --cached <file>
+
+git reset HEAD -- 全部撤销  撤销stage状态
+git reset HEAD -- ttest.php 只撤销这个文件
+
+git push --set-upstream origin master
+git branch --set-upstream my_branch origin/my_branch
